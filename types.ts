@@ -32,4 +32,6 @@ export interface CalculationResult {
   totalCost: number;
   costPerBox: number;
   rawMaterialAreaPerBox: number;
+  totalCostWithMargin: number;
+  costPerBoxWithMargin: number;
 }

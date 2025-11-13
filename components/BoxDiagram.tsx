@@ -1,11 +1,14 @@
+
 import React, { useRef, useState, useEffect } from 'react';
 import { BoxDimensions } from '../types';
 
 interface BoxDiagramProps {
   dimensions: BoxDimensions;
+  sheetLength: number;
+  sheetWidth: number;
 }
 
-const BoxDiagram: React.FC<BoxDiagramProps> = ({ dimensions }) => {
+const BoxDiagram: React.FC<BoxDiagramProps> = ({ dimensions, sheetLength, sheetWidth }) => {
   const { width, length, height } = dimensions;
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
@@ -56,52 +59,65 @@ const BoxDiagram: React.FC<BoxDiagramProps> = ({ dimensions }) => {
   const totalDiagramHeight = h + 2 * flapH;
 
   const dimTextStyle: React.CSSProperties = {
-    fontSize: `${Math.max(6, 12 * scale)}px`, 
+    fontSize: `${Math.max(10, 14 * scale)}px`, 
     fontWeight: 'bold',
     backgroundColor: 'rgba(255, 255, 255, 0.7)',
-    padding: `0 ${Math.max(1, 4 * scale)}px`,
+    padding: `0 ${Math.max(2, 4 * scale)}px`,
     borderRadius: '2px',
   };
 
   return (
-    <div ref={containerRef} className="p-4 bg-gray-50 rounded-lg border border-gray-200 overflow-hidden flex justify-center items-center" style={{ minHeight: totalDiagramHeight + 40 }}>
-      <div className="relative font-sans" style={{ width: totalDiagramWidth, height: totalDiagramHeight }}>
-        {/* Top Flaps */}
-        <div className="absolute border border-gray-400 bg-white" style={{ top: 0, left: glueW, width: w, height: flapH }}></div>
-        <div className="absolute border-b border-t border-r border-gray-400 bg-white" style={{ top: 0, left: glueW + w, width: l, height: flapH }}></div>
-        <div className="absolute border-b border-t border-r border-gray-400 bg-white" style={{ top: 0, left: glueW + w + l, width: w, height: flapH }}></div>
-        <div className="absolute border-b border-t border-r border-gray-400 bg-white" style={{ top: 0, left: glueW + w + l + w, width: l, height: flapH }}></div>
+    <div>
+      <div className="flex flex-col sm:flex-row justify-around bg-gray-100 p-3 rounded-lg mb-4 text-center space-y-2 sm:space-y-0">
+        <div>
+          <p className="text-sm text-gray-600">총 원단 가로 (전장)</p>
+          <p className="text-lg font-bold text-indigo-600">{sheetLength.toLocaleString()} mm</p>
+        </div>
+        <div className="border-t sm:border-t-0 sm:border-l border-gray-300"></div>
+        <div>
+          <p className="text-sm text-gray-600">총 원단 세로 (전폭)</p>
+          <p className="text-lg font-bold text-indigo-600">{sheetWidth.toLocaleString()} mm</p>
+        </div>
+      </div>
+      <div ref={containerRef} className="p-4 bg-gray-50 rounded-lg border border-gray-200 overflow-hidden flex justify-center items-center" style={{ minHeight: totalDiagramHeight + 40 }}>
+        <div className="relative font-sans" style={{ width: totalDiagramWidth, height: totalDiagramHeight }}>
+          {/* Top Flaps */}
+          <div className="absolute border border-gray-400 bg-white" style={{ top: 0, left: glueW, width: w, height: flapH }}></div>
+          <div className="absolute border-b border-t border-r border-gray-400 bg-white" style={{ top: 0, left: glueW + w, width: l, height: flapH }}></div>
+          <div className="absolute border-b border-t border-r border-gray-400 bg-white" style={{ top: 0, left: glueW + w + l, width: w, height: flapH }}></div>
+          <div className="absolute border-b border-t border-r border-gray-400 bg-white" style={{ top: 0, left: glueW + w + l + w, width: l, height: flapH }}></div>
 
-        {/* Main Body */}
-        <div className="absolute border-t border-b border-l border-gray-600 bg-gray-200 flex items-center justify-center" style={{ top: flapH, left: 0, width: glueW, height: h }}>
-            <span style={{ fontSize: `${Math.max(5, 10 * scale)}px`, writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>접착</span>
-        </div>
-        <div className="absolute border border-gray-600 bg-yellow-100 flex items-center justify-center" style={{ top: flapH, left: glueW, width: w, height: h }}>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4/5 flex flex-col items-center">
-                <div className="w-full h-px bg-red-500"></div>
-                <span className="text-red-600 -mt-2.5" style={dimTextStyle}>{dimensions.width}mm</span>
-            </div>
-        </div>
-        <div className="absolute border-y border-r border-gray-600 bg-blue-100 flex items-center justify-center" style={{ top: flapH, left: glueW + w, width: l, height: h }}>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4/5 flex flex-col items-center">
-                <div className="w-full h-px bg-red-500"></div>
-                <span className="text-red-600 -mt-2.5" style={dimTextStyle}>{dimensions.length}mm</span>
-            </div>
-        </div>
-        <div className="absolute border-y border-r border-gray-600 bg-yellow-100 flex items-center justify-center" style={{ top: flapH, left: glueW + w + l, width: w, height: h }}>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-4/5 flex items-center">
-                <div className="h-full w-px bg-red-500"></div>
-                <span className="text-red-600 -ml-2.5" style={{...dimTextStyle, writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>{dimensions.height}mm</span>
-            </div>
-        </div>
-        <div className="absolute border-y border-r border-gray-600 bg-blue-100 flex items-center justify-center" style={{ top: flapH, left: glueW + w + l + w, width: l, height: h }}></div>
-        
-        {/* Bottom Flaps */}
-        <div className="absolute border border-gray-400 bg-white" style={{ top: flapH + h, left: glueW, width: w, height: flapH }}></div>
-        <div className="absolute border-t border-b border-r border-gray-400 bg-white" style={{ top: flapH + h, left: glueW + w, width: l, height: flapH }}></div>
-        <div className="absolute border-t border-b border-r border-gray-400 bg-white" style={{ top: flapH + h, left: glueW + w + l, width: w, height: flapH }}></div>
-        <div className="absolute border-t border-b border-r border-gray-400 bg-white" style={{ top: flapH + h, left: glueW + w + l + w, width: l, height: flapH }}></div>
+          {/* Main Body */}
+          <div className="absolute border-t border-b border-l border-gray-600 bg-gray-200 flex items-center justify-center" style={{ top: flapH, left: 0, width: glueW, height: h }}>
+              <span style={{ fontSize: `${Math.max(5, 10 * scale)}px`, writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>접착</span>
+          </div>
+          <div className="absolute border border-gray-600 bg-yellow-100 flex items-center justify-center" style={{ top: flapH, left: glueW, width: w, height: h }}>
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4/5 flex flex-col items-center">
+                  <div className="w-full h-px bg-red-500"></div>
+                  <span className="text-red-600 -mt-2.5" style={dimTextStyle}>{dimensions.width}mm</span>
+              </div>
+          </div>
+          <div className="absolute border-y border-r border-gray-600 bg-blue-100 flex items-center justify-center" style={{ top: flapH, left: glueW + w, width: l, height: h }}>
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4/5 flex flex-col items-center">
+                  <div className="w-full h-px bg-red-500"></div>
+                  <span className="text-red-600 -mt-2.5" style={dimTextStyle}>{dimensions.length}mm</span>
+              </div>
+          </div>
+          <div className="absolute border-y border-r border-gray-600 bg-yellow-100 flex items-center justify-center" style={{ top: flapH, left: glueW + w + l, width: w, height: h }}>
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-4/5 flex items-center">
+                  <div className="h-full w-px bg-red-500"></div>
+                  <span className="text-red-600 -ml-2.5" style={{...dimTextStyle, writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>{dimensions.height}mm</span>
+              </div>
+          </div>
+          <div className="absolute border-y border-r border-gray-600 bg-blue-100 flex items-center justify-center" style={{ top: flapH, left: glueW + w + l + w, width: l, height: h }}></div>
+          
+          {/* Bottom Flaps */}
+          <div className="absolute border border-gray-400 bg-white" style={{ top: flapH + h, left: glueW, width: w, height: flapH }}></div>
+          <div className="absolute border-t border-b border-r border-gray-400 bg-white" style={{ top: flapH + h, left: glueW + w, width: l, height: flapH }}></div>
+          <div className="absolute border-t border-b border-r border-gray-400 bg-white" style={{ top: flapH + h, left: glueW + w + l, width: w, height: flapH }}></div>
+          <div className="absolute border-t border-b border-r border-gray-400 bg-white" style={{ top: flapH + h, left: glueW + w + l + w, width: l, height: flapH }}></div>
 
+        </div>
       </div>
     </div>
   );

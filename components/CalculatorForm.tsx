@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BoxDimensions, FluteType } from '../types';
 import { FLUTE_OPTIONS } from '../constants';
@@ -86,15 +85,20 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
           <label className="block text-sm font-medium text-gray-700 mb-1">제작 수량 (매)</label>
           <input
             type="number"
-            placeholder="1-999"
+            placeholder="50-999"
             value={quantity || ''}
-            min="1"
+            min="50"
             max="999"
             onChange={(e) => handleQuantityChange(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 transition"
           />
         </div>
       </div>
+       {quantity > 0 && quantity < 50 && (
+          <p className="text-sm text-red-600 font-semibold text-center">
+            최소 제작 수량은 50매입니다.
+          </p>
+      )}
       {quantity >= 1000 && (
           <p className="text-sm text-red-600 font-semibold text-center">
             1,000매 이상 제작은 사무실로 문의해주세요.
@@ -103,7 +107,7 @@ const CalculatorForm: React.FC<CalculatorFormProps> = ({
       <div className="pt-2 text-center">
         <button
           onClick={onCalculate}
-          disabled={quantity >= 1000}
+          disabled={quantity < 50 || quantity >= 1000}
           className="w-full sm:w-auto bg-green-600 text-white font-bold py-3 px-12 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-300 text-lg"
         >
           계산하기
